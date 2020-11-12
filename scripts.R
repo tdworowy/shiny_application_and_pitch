@@ -3,6 +3,7 @@ library(caret)
 install.packages("titanic")
 library(titanic)
 library(dplyr)
+library(rattle)
 titanic_train$Survived = as.factor(titanic_train$Survived)
 
 titanic_train$Survived = as.factor(titanic_train$Survived)
@@ -15,7 +16,7 @@ titanic_train<-titanic_train %>%
   select(Sex, Pclass, Age,SibSp, Parch, Survived)
 
 
-fit <- train(Survived ~ Pclass + Sex + Age + SibSp + Parch , method = 'rpart', data = titanic_train)
+fit <- train(Survived ~ Pclass + Sex + Age + SibSp + Parch , method = 'rpart2', data = titanic_train, maxdepth = 5)
 
 test <- data.frame(Pclass=1,Sex="male",Age=22)
 
@@ -28,3 +29,5 @@ test <- titanic_train[-in_train,]
 
 pred <- predict(fit,test)
 table(pred, test$Survived)
+
+fancyRpartPlot(fit$finalModel)
