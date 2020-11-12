@@ -1,0 +1,69 @@
+Assignment: Course Project: Shiny Application and Reproducible Pitch
+========================================================
+author: Tomasz Dworowy
+date: 11/12/2020
+autosize: true
+
+Shiny application witch use decision tree model to predict if user will survive titanic.
+
+
+Required libraries
+========================================================
+- Caret - machine learning library
+- titanic - data set
+- rattle - library use to create readable dendrogram
+- dplyr - data manipulation
+
+```{r}
+if (!require("caret"))
+    install.packages("caret")
+library(caret)
+if (!require("titanic"))
+    install.packages("titanic")
+library(titanic)
+if (!require("rattle"))
+    install.packages("rattle")
+library(rattle)
+if (!require("dplyr"))
+    install.packages("dplyr")
+library(dplyr)
+```
+
+Data set summary
+========================================================
+
+```{r, echo=FALSE}
+summary(titanic_train)
+```
+
+Model use in application
+========================================================
+
+```{r}
+ titanic_train$Survived = as.factor(titanic_train$Survived)
+ titanic_train$Sex = as.factor(titanic_train$Sex)
+ titanic_train$Pclass = as.factor(titanic_train$Pclass)
+ titanic_train <-titanic_train[complete.cases(titanic_train), ]
+ 
+ titanic_train<-titanic_train %>%
+  select(Sex, Pclass, Age,SibSp, Parch, Survived)
+ 
+ in_train <- createDataPartition( y = titanic_train$Survived , p = 0.75, list = FALSE)
+ test <- titanic_train[-in_train,]
+
+    
+ fit <- train(Survived ~ Pclass + Sex + Age + SibSp + Parch, method = 'rpart2', data = titanic_train)
+ fancyRpartPlot(fit$finalModel)
+    
+```
+
+
+Model Testing
+========================================================
+
+```{r}
+pred <- predict(fit,test)
+table(pred, test$Survived)
+
+```
+
